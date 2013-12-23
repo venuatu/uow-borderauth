@@ -19,26 +19,20 @@ object SharedUtils {
     ("24 hours", 24 * 60 * 60)
   )
 
-  case class Response(code: Int, headers: Map[String, List[String]], body: String)
-
-  def post(url: String, params: Map[String, String]) = {
-  }
+  case class Response(code: Int, body: String)
 
   def borderAuth(ctx: Context): Future[Response] = {
     val prefs = PreferenceManager.getDefaultSharedPreferences(ctx)
-    val username = prefs.getString("username", "")
-    val password = prefs.getString("password", "")
-    val duration = timeOptions(prefs.getInt("duration", 0))._2.toString
     val params = Map(
-      "username" -> username,
-      "password" -> password,
-      "duration" -> duration
+      "username" -> prefs.getString("username", ""),
+      "password" -> prefs.getString("password", ""),
+      "duration" -> timeOptions(prefs.getInt("duration", 0))._2.toString
     )
     future {
       val req = HttpRequest.post("https://api.uow.edu.au/borderauth/open/")
         .userAgent("me.myuow.android.borderauth v1").acceptJson().form(params.asJava)
       val body = new JSONObject(req.body).getString("message")
-      Response(req.code, null, body)
+      Response(req.code, body)
     }
   }
 }

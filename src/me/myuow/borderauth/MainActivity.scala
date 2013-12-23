@@ -51,7 +51,7 @@ class MainActivity extends SActivity {
       .commit()
     val fut = SharedUtils.borderAuth(ctx)
     fut onSuccess {
-      case Response(code, _, body) => {
+      case Response(code, body) => {
         warn(s"Response: $code $body")
         longToast(body)
         finish()

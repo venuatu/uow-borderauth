@@ -20,7 +20,7 @@ class NetworkMonitor extends BroadcastReceiver {
       if (wifi.getSSID == "\"UOW\"" && isAllowed(ctx)) {// it's returned in quotes
         val fut = SharedUtils.borderAuth(ctx)
         fut onSuccess {
-          case Response(code, _, message) => {
+          case Response(code, message) => {
             onUiThread {
               Toast.makeText(ctx, s"BorderAuth: $message", Toast.LENGTH_LONG).show()
             }
