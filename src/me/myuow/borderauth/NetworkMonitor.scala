@@ -15,9 +15,10 @@ class NetworkMonitor extends BroadcastReceiver {
   override def onReceive(ctx: Context, intent: Intent): Unit = {
     val service = ctx.getSystemService(Context.CONNECTIVITY_SERVICE).asInstanceOf[ConnectivityManager]
     val info = service.getActiveNetworkInfo()
-    if (info.getType == ConnectivityManager.TYPE_WIFI && info.getState == NetworkInfo.State.CONNECTED) {
+    if (info != null && info.getType == ConnectivityManager.TYPE_WIFI && 
+                            info.getState == NetworkInfo.State.CONNECTED) {
       val wifi = ctx.getSystemService(Context.WIFI_SERVICE).asInstanceOf[WifiManager].getConnectionInfo
-      if (wifi.getSSID == "\"UOW\"" && isAllowed(ctx)) {// it's returned in quotes
+      if (wifi != null && wifi.getSSID == "\"UOW\"" && isAllowed(ctx)) {// it's returned in quotes
         val fut = SharedUtils.borderAuth(ctx)
         fut onSuccess {
           case Response(code, message) => {
