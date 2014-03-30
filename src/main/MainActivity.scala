@@ -8,12 +8,15 @@ import android.os.{Build, Bundle}
 import scala.concurrent.ExecutionContext.Implicits.global
 import android.preference.PreferenceManager
 import me.myuow.borderauth.SharedUtils.Response
+import me.myuow.borderauth.SharedUtils.Response
+import scala.util.{Failure, Success}
 
 class MainActivity extends SActivity {
 
   var username: SEditText = null
   var password: SEditText = null
   var duration: SSpinner = null
+  var autoauth: SCheckBox = null
 
   override def onCreate(savedInstanceState: Bundle) {
     super.onCreate(savedInstanceState)
@@ -23,9 +26,7 @@ class MainActivity extends SActivity {
 
     contentView = new SVerticalLayout {
       style {
-        case x: SView => x.padding(4 sp)
-        case edit: SEditText => edit.<<(FILL_PARENT, WRAP_CONTENT).>>
-        case button: SButton => button.textSize(16 sp).<<(FILL_PARENT, WRAP_CONTENT).Gravity(Gravity.CENTER_HORIZONTAL).Weight(1).>>
+        case x: SView => x.padding(4 sp).<<(FILL_PARENT, WRAP_CONTENT).>>
       }
       username = SEditText().hint("Username")
       password = SEditText().hint("Password")
@@ -33,35 +34,34 @@ class MainActivity extends SActivity {
       duration = SSpinner()
         .adapter(SArrayAdapter(SharedUtils.timeOptions.map{_._1})
           .dropDownViewResource(android.R.layout.simple_spinner_dropdown_item))
-        .<<(FILL_PARENT, WRAP_CONTENT).>>
+      //remember = SCheckBox("Remember me")
       this += new SLinearLayout{
-        SButton("Always", borderAuth(true))
-        SButton("Just once", borderAuth(false))
+        autoauth = SCheckBox("Automatic").<<.Weight(1).>>
+        SButton("BorderAuth", borderAuth())
+          .textSize(16 sp).<<.Weight(1).>>
       }
     }
     val pref = PreferenceManager.getDefaultSharedPreferences(ctx)
-    username.text(pref.getString("username", ""))
-    password.text(pref.getString("password", ""))
-    duration.setSelection(pref.getInt("duration", 4))
+    username.text = pref.getString("username", "")
+    password.text = pref.getString("password", "")
+    duration.selection = pref.getInt("duration", 0)
+    autoauth.checked = pref.getBoolean("automatic", true)
   }
 
-  def borderAuth(always: Boolean): Unit = {
+  def borderAuth() {
     PreferenceManager.getDefaultSharedPreferences(ctx).edit()
-      .putString("username", username.getText.toString)
-      .putString("password", password.getText.toString)
-      .putInt("duration", duration.getSelectedItemPosition)
-      .putBoolean("always", always)
+      .putString("username", username.text.toString)
+      .putString("password", password.text.toString)
+      .putInt("duration", duration.selectedItemPosition)
+      .putBoolean("automatic", autoauth.checked)
       .commit()
-    val fut = SharedUtils.borderAuth(ctx)
-    fut onSuccess {
-      case Response(code, body) => {
+    SharedUtils.borderAuth() onComplete {
+      case Success(Response(code, body)) => {
         warn(s"Response: $code $body")
         longToast(body)
         finish()
       }
-    }
-    fut onFailure {
-      case e => {
+      case Failure(e) => {
         error("failed request", e)
         longToast(e.getMessage)
       }

@@ -12,14 +12,15 @@ import android.preference.PreferenceManager
 
 class NetworkMonitor extends BroadcastReceiver {
 
-  override def onReceive(ctx: Context, intent: Intent): Unit = {
+  override def onReceive(ctx: Context, intent: Intent) {
     val service = ctx.getSystemService(Context.CONNECTIVITY_SERVICE).asInstanceOf[ConnectivityManager]
     val info = service.getActiveNetworkInfo()
     if (info != null && info.getType == ConnectivityManager.TYPE_WIFI && 
                             info.getState == NetworkInfo.State.CONNECTED) {
       val wifi = ctx.getSystemService(Context.WIFI_SERVICE).asInstanceOf[WifiManager].getConnectionInfo
-      if (wifi != null && wifi.getSSID == "\"UOW\"" && isAllowed(ctx)) {// it's returned in quotes
-        val fut = SharedUtils.borderAuth(ctx)
+      if (wifi != null && wifi.getSSID == "\"UOW\"" && isAllowed(ctx)// the ssid is returned in quotes
+        && !SharedUtils.isBorderAuthActive(ctx)) {
+        val fut = SharedUtils.borderAuth()(ctx)
         fut onSuccess {
           case Response(code, message) => {
             onUiThread {
@@ -33,14 +34,14 @@ class NetworkMonitor extends BroadcastReceiver {
   }
 
   def isAllowed(ctx: Context): Boolean = {
-    PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("always", false)
+    PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("automatic", false)
   }
 
-  def onUiThread(job: => Unit): Unit = {
+  def onUiThread(job: => Unit) {
     new Handler(Looper.getMainLooper()).post(new Runnable {
       def run(): Unit = {
         job
       }
-    });
+    })
   }
 }
