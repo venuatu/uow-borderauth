@@ -1,10 +1,10 @@
-package me.myuow.borderauth
+package main
 
 import android.content.{BroadcastReceiver, Context, Intent}
 import android.net.{ConnectivityManager, NetworkInfo}
 import android.net.wifi.WifiManager
 import android.util.Log
-import me.myuow.borderauth.SharedUtils.Response
+import main.SharedUtils.Response
 import android.widget.Toast
 import scala.concurrent.ExecutionContext.Implicits.global
 import android.os.{Handler, Looper}

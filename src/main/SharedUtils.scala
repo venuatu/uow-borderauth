@@ -1,4 +1,4 @@
-package me.myuow.borderauth
+package main
 
 import com.github.kevinsawicki.http.HttpRequest
 import scala.concurrent._

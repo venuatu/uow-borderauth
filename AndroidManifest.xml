@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="me.myuow.borderauth"
+      package="au.edu.uow.borderauth"
       android:versionCode="5"
       android:versionName="1.0.0">
     <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="19"/>
@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <application android:label="UOW BorderAuth"
                  android:icon="@drawable/ic_launcher">
-        <activity android:name=".MainActivity"
+        <activity android:name="main.MainActivity"
                   android:label="UOW BorderAuth"
                   android:theme="@android:style/Theme.Holo.Dialog"
                   android:excludeFromRecents="true">
@@ -18,7 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".NetworkMonitor">
+        <receiver android:name="main.NetworkMonitor">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>

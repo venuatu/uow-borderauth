@@ -1,4 +1,4 @@
-package me.myuow.borderauth
+package main
 
 import scala.language.postfixOps
 import org.scaloid.common._
@@ -7,8 +7,7 @@ import android.view.Gravity
 import android.os.{Build, Bundle}
 import scala.concurrent.ExecutionContext.Implicits.global
 import android.preference.PreferenceManager
-import me.myuow.borderauth.SharedUtils.Response
-import me.myuow.borderauth.SharedUtils.Response
+import main.SharedUtils.Response
 import scala.util.{Failure, Success}
 
 class MainActivity extends SActivity {
