@@ -44,7 +44,7 @@ object SharedUtils {
       if (!GOOD_CODES.contains(body.getInt("status"))) {
         throw new Exception("Failed to BorderAuth: " + body.getString("message"))
       }
-      val expire = System.currentTimeMillis() + (duration * 0.9).toLong
+      val expire = System.currentTimeMillis() + (duration * 1000 * 0.9).toLong
       prefs.edit()
         .putLong("authExpire", expire)
         .putInt("ip", getIpAddress)
